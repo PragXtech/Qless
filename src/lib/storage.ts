@@ -90,6 +90,42 @@ const DEFAULT_BRANCHES: Branch[] = [
     is_active: true,
     opening_time: '09:30',
     closing_time: '16:30'
+  },
+  {
+    id: 'branch-apex-kora',
+    organisation_id: 'org-apex-bank',
+    name: 'Koramangala Tech Branch',
+    code: 'KTB-02',
+    address: '4th Block, 80 Feet Road',
+    city: 'Bengaluru',
+    state: 'Karnataka',
+    is_active: true,
+    opening_time: '09:30',
+    closing_time: '16:30'
+  },
+  {
+    id: 'branch-city-main',
+    organisation_id: 'org-city-govt',
+    name: 'Central Municipal Headquarters',
+    code: 'CMH-01',
+    address: 'Corporation Circle, NR Square',
+    city: 'Bengaluru',
+    state: 'Karnataka',
+    is_active: true,
+    opening_time: '09:00',
+    closing_time: '17:30'
+  },
+  {
+    id: 'branch-city-east',
+    organisation_id: 'org-city-govt',
+    name: 'Citizen Service Center East',
+    code: 'CSC-02',
+    address: 'Indiranagar 100ft Road',
+    city: 'Bengaluru',
+    state: 'Karnataka',
+    is_active: true,
+    opening_time: '09:30',
+    closing_time: '17:00'
   }
 ];
 
@@ -149,6 +185,48 @@ const DEFAULT_SERVICES: Service[] = [
     allow_walkin: true,
     priority_level: 1,
     required_documents: ['Valid ID Proof', 'Account Passbook / Cheque Book']
+  },
+  {
+    id: 'srv-apex-loan',
+    organisation_id: 'org-apex-bank',
+    branch_id: 'branch-apex-mg',
+    name: 'Personal & Home Loans Desk',
+    code: 'L',
+    description: 'Loan inquiries, document verification, and credit appraisal.',
+    avg_duration_minutes: 25,
+    is_active: true,
+    requires_appointment: true,
+    allow_walkin: true,
+    priority_level: 2,
+    required_documents: ['Salary Slips (3 mos)', 'Bank Statements (6 mos)', 'PAN & Aadhaar Card']
+  },
+  {
+    id: 'srv-city-license',
+    organisation_id: 'org-city-govt',
+    branch_id: 'branch-city-main',
+    name: 'Trade & Business License Desk',
+    code: 'T',
+    description: 'Commercial enterprise registration, renewals, and sanitary trade permits.',
+    avg_duration_minutes: 18,
+    is_active: true,
+    requires_appointment: false,
+    allow_walkin: true,
+    priority_level: 1,
+    required_documents: ['Property Tax Receipt / Lease Agreement', 'PAN & Aadhaar', 'Business Plan']
+  },
+  {
+    id: 'srv-city-property',
+    organisation_id: 'org-city-govt',
+    branch_id: 'branch-city-main',
+    name: 'Property Tax & Land Verification',
+    code: 'D',
+    description: 'Khata certificates, property registration verification, and tax assessments.',
+    avg_duration_minutes: 15,
+    is_active: true,
+    requires_appointment: false,
+    allow_walkin: true,
+    priority_level: 1,
+    required_documents: ['Title Deed / Sale Deed Copy', 'Latest Tax Paid Receipt', 'Owner Photo ID']
   }
 ];
 
@@ -196,6 +274,50 @@ const DEFAULT_COUNTERS: Counter[] = [
     is_paused: false,
     current_token_id: null,
     assigned_staff_id: 'staff-priya'
+  },
+  {
+    id: 'cnt-apex-1',
+    organisation_id: 'org-apex-bank',
+    branch_id: 'branch-apex-mg',
+    name: 'Cash Window 1',
+    counter_number: 1,
+    is_active: true,
+    is_paused: false,
+    current_token_id: null,
+    assigned_staff_id: 'staff-apex-arun'
+  },
+  {
+    id: 'cnt-apex-2',
+    organisation_id: 'org-apex-bank',
+    branch_id: 'branch-apex-mg',
+    name: 'Loan Advisory Desk',
+    counter_number: 2,
+    is_active: true,
+    is_paused: false,
+    current_token_id: null,
+    assigned_staff_id: 'staff-apex-meera'
+  },
+  {
+    id: 'cnt-city-1',
+    organisation_id: 'org-city-govt',
+    branch_id: 'branch-city-main',
+    name: 'Trade License Counter 1',
+    counter_number: 1,
+    is_active: true,
+    is_paused: false,
+    current_token_id: null,
+    assigned_staff_id: 'staff-city-rajesh'
+  },
+  {
+    id: 'cnt-city-2',
+    organisation_id: 'org-city-govt',
+    branch_id: 'branch-city-main',
+    name: 'Property Tax Counter 2',
+    counter_number: 2,
+    is_active: true,
+    is_paused: false,
+    current_token_id: null,
+    assigned_staff_id: 'staff-city-sunil'
   }
 ];
 
@@ -251,6 +373,58 @@ const DEFAULT_STAFF: StaffProfile[] = [
     email: 'priya.n@apollocare.org',
     counter_name: 'Pharmacy Dispense 1',
     service_name: 'Central Hospital Pharmacy'
+  },
+  {
+    id: 'staff-apex-arun',
+    user_id: 'usr-staff-apex-arun',
+    organisation_id: 'org-apex-bank',
+    branch_id: 'branch-apex-mg',
+    assigned_counter_id: 'cnt-apex-1',
+    assigned_service_id: 'srv-apex-teller',
+    availability_status: 'available',
+    full_name: 'Arun Kulkarni (Senior Cashier)',
+    email: 'arun.k@apexbank.com',
+    counter_name: 'Cash Window 1',
+    service_name: 'Cash Deposits & Withdrawals'
+  },
+  {
+    id: 'staff-apex-meera',
+    user_id: 'usr-staff-apex-meera',
+    organisation_id: 'org-apex-bank',
+    branch_id: 'branch-apex-mg',
+    assigned_counter_id: 'cnt-apex-2',
+    assigned_service_id: 'srv-apex-loan',
+    availability_status: 'available',
+    full_name: 'Meera Sen (Loan Officer)',
+    email: 'meera.s@apexbank.com',
+    counter_name: 'Loan Advisory Desk',
+    service_name: 'Personal & Home Loans Desk'
+  },
+  {
+    id: 'staff-city-rajesh',
+    user_id: 'usr-staff-city-rajesh',
+    organisation_id: 'org-city-govt',
+    branch_id: 'branch-city-main',
+    assigned_counter_id: 'cnt-city-1',
+    assigned_service_id: 'srv-city-license',
+    availability_status: 'available',
+    full_name: 'Rajesh Gowda (Licensing Officer)',
+    email: 'rajesh.g@civic.gov.in',
+    counter_name: 'Trade License Counter 1',
+    service_name: 'Trade & Business License Desk'
+  },
+  {
+    id: 'staff-city-sunil',
+    user_id: 'usr-staff-city-sunil',
+    organisation_id: 'org-city-govt',
+    branch_id: 'branch-city-main',
+    assigned_counter_id: 'cnt-city-2',
+    assigned_service_id: 'srv-city-property',
+    availability_status: 'available',
+    full_name: 'Sunil Kumar (Revenue Inspector)',
+    email: 'sunil.k@civic.gov.in',
+    counter_name: 'Property Tax Counter 2',
+    service_name: 'Property Tax & Land Verification'
   }
 ];
 
@@ -346,10 +520,10 @@ const DEFAULT_TOKENS: QueueToken[] = [
     branch_id: 'branch-apollo-central',
     service_id: 'srv-apollo-gen',
     queue_id: 'q-apollo-gen',
-    customer_id: 'cust-user-me',
-    customer_name: 'Kavya Krishnan',
+    customer_id: 'cust-demo-prior',
+    customer_name: 'Ananya Deshmukh',
     customer_phone: '+91 97410 77889',
-    customer_email: 'kavya.k@example.com',
+    customer_email: 'ananya.d@example.com',
     entry_channel: 'portal',
     is_appointment: false,
     priority: 'normal',
@@ -655,6 +829,9 @@ export const StorageAPI = {
   },
 
   // Tokens
+  getAllTokens: (): QueueToken[] => {
+    return loadFromStorage<QueueToken[]>(STORAGE_KEYS.TOKENS, DEFAULT_TOKENS);
+  },
   getTokens: (organisationId: string): QueueToken[] => {
     const all = loadFromStorage<QueueToken[]>(STORAGE_KEYS.TOKENS, DEFAULT_TOKENS);
     return all.filter(t => t.organisation_id === organisationId);
@@ -679,25 +856,26 @@ export const StorageAPI = {
   }): { success: boolean; token?: QueueToken; error?: string } => {
     const tokens = loadFromStorage<QueueToken[]>(STORAGE_KEYS.TOKENS, DEFAULT_TOKENS);
     const service = StorageAPI.getServiceById(params.serviceId);
-    const org = StorageAPI.getOrganisationById(params.organisationId);
+    const targetOrgId = service?.organisation_id || params.organisationId;
+    const org = StorageAPI.getOrganisationById(targetOrgId);
 
     if (!service || !org) {
-      return { success: false, error: 'Service or Organisation not found.' };
+      return { success: false, error: 'Selected service or organisation not found.' };
     }
 
-    // Check duplicate active token for same customer if customerId provided
+    // Check duplicate active token for same customer if customerId provided.
+    // If an active token already exists for this service, gracefully supersede it so the new token is issued!
     if (params.customerId) {
-      const existing = tokens.find(t => 
-        t.customer_id === params.customerId && 
-        t.service_id === params.serviceId && 
-        ['waiting', 'approaching', 'called', 'serving'].includes(t.status)
-      );
-      if (existing) {
-        return { 
-          success: false, 
-          error: `You already have an active token (${existing.token_number}) for this service.` 
-        };
-      }
+      tokens.forEach(t => {
+        if (
+          t.customer_id === params.customerId && 
+          t.service_id === params.serviceId && 
+          ['waiting', 'approaching', 'called', 'serving'].includes(t.status)
+        ) {
+          t.status = 'cancelled';
+          t.cancellation_reason = 'Superseded by new token request';
+        }
+      });
     }
 
     // Determine prefix and next sequence
@@ -716,7 +894,7 @@ export const StorageAPI = {
       id: `tok-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
       token_number: tokenNumber,
       sequence_number: nextSeq,
-      organisation_id: params.organisationId,
+      organisation_id: targetOrgId,
       branch_id: params.branchId,
       service_id: params.serviceId,
       queue_id: `q-${params.serviceId}`,

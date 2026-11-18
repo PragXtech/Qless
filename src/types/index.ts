@@ -127,6 +127,7 @@ export interface QueueToken {
   branch_name?: string;
   org_name?: string;
   delay_requested_minutes?: number;
+  cancellation_reason?: string;
 }
 
 export interface Appointment {

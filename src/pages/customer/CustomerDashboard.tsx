@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useQueue } from '../../context/QueueContext';
 import { TokenCard } from '../../components/TokenCard';
+import { StorageAPI } from '../../lib/storage';
 import { analyzeCrowdIntelligence } from '../../lib/crowdIntelligence';
 import { 
   PlusCircle, 
@@ -26,9 +27,10 @@ export const CustomerDashboard: React.FC = () => {
   // Crowd intelligence recommendation for current organisation
   const crowd = analyzeCrowdIntelligence(currentOrg?.id || 'org-apollo-1');
 
-  // Customer's past tokens
-  const historyTokens = tokens.filter(t => 
-    (t.customer_id === user?.id || t.customer_email === user?.email) &&
+  // Customer's past tokens across all organisations
+  const allTokens = StorageAPI.getAllTokens();
+  const historyTokens = allTokens.filter(t => 
+    (t.customer_id === user?.id || (user?.email && t.customer_email === user.email)) &&
     ['completed', 'cancelled'].includes(t.status)
   );
 

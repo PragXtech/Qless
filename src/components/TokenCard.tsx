@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { QueueToken } from '../types';
 import { useQueue } from '../context/QueueContext';
+import { StorageAPI } from '../lib/storage';
 import { calculateWaitTimePrediction } from '../lib/predictionEngine';
 import { QRCodeSVG } from 'qrcode.react';
 import { 
@@ -29,8 +30,9 @@ export const TokenCard: React.FC<TokenCardProps> = ({ token, isDetailed = true }
   const [showQr, setShowQr] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
 
-  // Calculate live dynamic queue position & people ahead
-  const sameServiceWaiting = tokens.filter(t => 
+  // Calculate live dynamic queue position & people ahead within token's organisation
+  const orgTokens = StorageAPI.getTokens(token.organisation_id);
+  const sameServiceWaiting = orgTokens.filter(t => 
     t.service_id === token.service_id && 
     (t.status === 'waiting' || t.status === 'approaching')
   );
@@ -40,7 +42,7 @@ export const TokenCard: React.FC<TokenCardProps> = ({ token, isDetailed = true }
   const position = tokenIndex >= 0 ? tokenIndex + 1 : 1;
 
   // Currently serving token for this service
-  const currentServing = tokens.find(t => 
+  const currentServing = orgTokens.find(t => 
     t.service_id === token.service_id && 
     (t.status === 'serving' || t.status === 'called')
   );

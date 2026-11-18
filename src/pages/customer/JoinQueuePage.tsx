@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useQueue } from '../../context/QueueContext';
@@ -24,21 +24,40 @@ export const JoinQueuePage: React.FC = () => {
   const navigate = useNavigate();
 
   const orgs = StorageAPI.getOrganisations();
-  const selectedOrgId = currentOrg?.id || orgs[0].id;
-  const branches = StorageAPI.getBranches(selectedOrgId);
-  const services = StorageAPI.getServices(selectedOrgId);
+  const [activeOrgId, setActiveOrgId] = useState<string>(currentOrg?.id || orgs[0].id);
+  const branches = StorageAPI.getBranches(activeOrgId);
+  const services = StorageAPI.getServices(activeOrgId);
 
   // Form states
   const [selectedBranchId, setSelectedBranchId] = useState<string>(branches[0]?.id || '');
   const [selectedServiceId, setSelectedServiceId] = useState<string>(services[0]?.id || '');
   const [entryType, setEntryType] = useState<'walkin' | 'appointment'>('walkin');
   const [priority, setPriority] = useState<PriorityLevel>('normal');
-  const [customerName, setCustomerName] = useState<string>(user?.full_name || '');
+  const [customerName, setCustomerName] = useState<string>(user?.full_name || 'Kavya Krishnan');
   const [customerPhone, setCustomerPhone] = useState<string>(user?.phone || '+91 97410 77889');
-  const [customerEmail, setCustomerEmail] = useState<string>(user?.email || '');
+  const [customerEmail, setCustomerEmail] = useState<string>(user?.email || 'kavya.k@example.com');
   const [emergencyReason, setEmergencyReason] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sync branches & services whenever organisation changes
+  useEffect(() => {
+    const bList = StorageAPI.getBranches(activeOrgId);
+    const sList = StorageAPI.getServices(activeOrgId);
+    if (!bList.some(b => b.id === selectedBranchId)) {
+      setSelectedBranchId(bList[0]?.id || '');
+    }
+    if (!sList.some(s => s.id === selectedServiceId)) {
+      setSelectedServiceId(sList[0]?.id || '');
+    }
+  }, [activeOrgId]);
+
+  // Sync user info if user changes
+  useEffect(() => {
+    if (user?.full_name) setCustomerName(user.full_name);
+    if (user?.phone) setCustomerPhone(user.phone);
+    if (user?.email) setCustomerEmail(user.email);
+  }, [user]);
 
   const selectedService = services.find(s => s.id === selectedServiceId) || services[0];
 
@@ -46,8 +65,11 @@ export const JoinQueuePage: React.FC = () => {
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!selectedBranchId || !selectedServiceId || !customerName.trim()) {
-      setErrorMessage('Please complete all required fields.');
+    const finalBranchId = selectedBranchId || branches[0]?.id;
+    const finalServiceId = selectedServiceId || services[0]?.id;
+
+    if (!finalBranchId || !finalServiceId || !customerName.trim()) {
+      setErrorMessage('Please select an organisation, branch, service and provide your name.');
       return;
     }
 
@@ -59,11 +81,12 @@ export const JoinQueuePage: React.FC = () => {
     setIsSubmitting(true);
 
     const res = generateToken({
-      branchId: selectedBranchId,
-      serviceId: selectedServiceId,
-      customerName,
-      customerPhone,
-      customerEmail,
+      organisationId: activeOrgId,
+      branchId: finalBranchId,
+      serviceId: finalServiceId,
+      customerName: customerName.trim(),
+      customerPhone: customerPhone.trim() || undefined,
+      customerEmail: customerEmail.trim() || undefined,
       entryChannel: 'portal',
       isAppointment: entryType === 'appointment',
       priority
@@ -72,6 +95,11 @@ export const JoinQueuePage: React.FC = () => {
     setIsSubmitting(false);
 
     if (res.success && res.token) {
+      // Sync currentOrg in context so dashboard immediately shows this organisation
+      const matchedOrg = orgs.find(o => o.id === activeOrgId);
+      if (matchedOrg) {
+        setCurrentOrg(matchedOrg);
+      }
       navigate('/customer');
     } else {
       setErrorMessage(res.error || 'Failed to generate token. Please try again.');
@@ -124,6 +152,7 @@ export const JoinQueuePage: React.FC = () => {
                   type="button"
                   key={org.id}
                   onClick={() => {
+                    setActiveOrgId(org.id);
                     setCurrentOrg(org);
                     const bList = StorageAPI.getBranches(org.id);
                     const sList = StorageAPI.getServices(org.id);
@@ -131,7 +160,7 @@ export const JoinQueuePage: React.FC = () => {
                     setSelectedServiceId(sList[0]?.id || '');
                   }}
                   className={`p-3 rounded-xl border text-left transition-all ${
-                    currentOrg?.id === org.id
+                    activeOrgId === org.id
                       ? 'border-brand-500 bg-brand-50/50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-200 ring-2 ring-brand-500/20'
                       : 'border-border-light dark:border-border-dark hover:border-slate-300 text-text-secLight'
                   }`}

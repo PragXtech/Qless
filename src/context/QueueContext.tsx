@@ -13,6 +13,7 @@ interface QueueContextType {
   myActiveToken: QueueToken | null;
   refreshQueue: () => void;
   generateToken: (params: {
+    organisationId?: string;
     branchId: string;
     serviceId: string;
     customerName: string;
@@ -72,25 +73,29 @@ export const QueueProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     });
 
-    // Also listen to window storage sync
+    // Also listen to window storage sync for cross-tab realtime updates
     const handleStorageSync = () => {
       refreshQueue();
     };
     window.addEventListener('qless_realtime_sync', handleStorageSync);
+    window.addEventListener('storage', handleStorageSync);
 
     return () => {
       unsubscribe();
       window.removeEventListener('qless_realtime_sync', handleStorageSync);
+      window.removeEventListener('storage', handleStorageSync);
     };
   }, [orgId, refreshQueue]);
 
-  // Find customer's active token
-  const myActiveToken = tokens.find(t => 
-    (t.customer_id === user?.id || t.customer_email === user?.email) &&
+  // Find customer's active token across all organisations so customer never loses their active ticket
+  const allTokens = StorageAPI.getAllTokens();
+  const myActiveToken = allTokens.find(t => 
+    (t.customer_id === user?.id || (user?.email && t.customer_email === user.email)) &&
     ['waiting', 'approaching', 'called', 'serving', 'missed'].includes(t.status)
   ) || null;
 
   const generateToken = (params: {
+    organisationId?: string;
     branchId: string;
     serviceId: string;
     customerName: string;
@@ -100,8 +105,9 @@ export const QueueProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     isAppointment?: boolean;
     priority?: 'normal' | 'emergency' | 'accessibility';
   }) => {
+    const targetOrg = params.organisationId || orgId;
     const res = StorageAPI.generateToken({
-      organisationId: orgId,
+      organisationId: targetOrg,
       branchId: params.branchId,
       serviceId: params.serviceId,
       customerName: params.customerName,
