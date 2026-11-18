@@ -94,9 +94,9 @@ It transforms waiting from a blind, stressful bottleneck into a transparent, pre
 
 ### Installation
 ```bash
-# 1. Clone the repository
-git clone https://github.com/your-username/qless.git
-cd qless
+# 1.Clone the repository
+git clone https://github.com/PragXtech/Qless.git
+cd Qless
 
 # 2. Install dependencies
 npm install
